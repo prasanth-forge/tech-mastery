@@ -1,0 +1,22 @@
+info:
+  name: POST
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:8080/users
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Dave",
+        "email": "dave@prasanth-forge.com"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
