@@ -6,6 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:8080/users
+  headers:
+    - name: Authorization
+      value: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcmFzYW50aEBwcmFzYW50aC1mb3JnZS5jb20iLCJpYXQiOjE3NzQ4MDMzNDUsImV4cCI6MTc3NDgxMjk0NX0.W3biMqYoU-hmxxnxllGZnI-X5H960xbQxDcxpSZdczA
   auth: inherit
 
 settings:

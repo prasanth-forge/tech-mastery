@@ -16,6 +16,11 @@
 | `@Table(name = "...")`                                | Class      | Overrides the default table name                                            |
 | `@Id`                                                 | Field      | Marks the primary key field                                                 |
 | `@GeneratedValue(strategy = GenerationType.IDENTITY)` | Field      | Auto-increments the id — database handles generation                        |
+| `@Configuration` | Class | Marks class as a source of bean definitions |
+| `@EnableWebSecurity` | Class | Enables Spring Security's web security support |
+| `@Bean` | Method | Registers the method's return value as a Spring-managed bean |
+| `@Service` | Class | Specialisation of `@Component` — semantically marks service layer classes |
+| `@Component` | Class | Marks class as a Spring-managed bean, available for injection |
 
 ## Key Classes
 
@@ -30,6 +35,8 @@
 | Interface              | What it does                                                                          |
 | ---------------------- | ------------------------------------------------------------------------------------- |
 | `JpaRepository<T, ID>` | Gives you `findAll`, `findById`, `save`, `deleteById`, `existsById` and more for free |
+| `UserDetails` | Spring Security interface your `User` must implement for authentication to work |
+| `UserDetailsService` | Interface with one method `loadUserByUsername` — Spring calls this during authentication |
 
 ## Concepts
 
@@ -39,3 +46,8 @@
 | `List.of(...)`  | Creates an **immutable** list — you cannot add/remove. Use `new ArrayList<>(List.of(...))` if you need to mutate |
 | Stream API      | Functional-style operations on collections: `filter`, `map`, `findFirst` etc.                                    |
 | Reserved words  | Some common words like `user` are reserved in SQL — use `@Table(name = "users")` to avoid conflicts              |
+| CSRF | Cross-Site Request Forgery protection — disable for stateless JWT REST APIs |
+| JWT filter | Extends `OncePerRequestFilter` — intercepts every request to validate the token |
+| `SecurityContextHolder` | Spring's holder for the current authenticated user — set this to authenticate a request |
+| `BCryptPasswordEncoder` | Standard password hashing — never store plain text passwords |
+| Spring IoC container | Manages all beans (`@Component`, `@Service`, `@Repository`, `@Bean`) — handles creation and injection |
