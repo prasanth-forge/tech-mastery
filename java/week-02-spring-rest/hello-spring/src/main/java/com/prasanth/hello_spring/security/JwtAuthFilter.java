@@ -36,14 +36,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        var jwtToken = authorizationHeader.replaceFirst("Bearer ", "");
-        var userName = jwtUtil.extractUsername(jwtToken);
-        if (jwtUtil.isTokenValid(userName, jwtToken)) {
+        try {
+            var jwtToken = authorizationHeader.replaceFirst("Bearer ", "");
+            var userName = jwtUtil.extractUsername(jwtToken);
             var userDetails = userDetailsService.loadUserByUsername(userName);
-            var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (jwtUtil.isTokenValid(userDetails.getUsername(), jwtToken)) {
+                var authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        } catch (Exception e) {
+            // invalid token - do nothing, request continues unauthenticated
         }
+
         filterChain.doFilter(request, response);
     }
 }
