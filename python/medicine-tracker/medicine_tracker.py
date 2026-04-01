@@ -1,5 +1,10 @@
 from openpyxl import load_workbook
 from datetime import date
+from dotenv import load_dotenv
+import os
+import requests
+
+load_dotenv()
 
 
 def get_entries(worksheet):
@@ -35,17 +40,30 @@ def check_alerts(entries, current):
     days_remaining = (batch_end - date.today()).days
 
     if days_remaining == 7:
-        print("⚠️ 7 days left — time to order next batch")
+        send_telegram("⚠️ 7 days left — time to order next batch")
     elif days_remaining == 4:
-        print("🚨 4 days left — order urgently")
+        send_telegram("🚨 4 days left — order urgently")
     else:
-        print(f"✅ {days_remaining} days remaining until batch ends")
+        send_telegram(f"✅ {days_remaining} days remaining until batch ends")
 
     next_batch_num = int(current["serial"]) + 1
     next_batch = [e for e in entries if e["serial"] == next_batch_num + 0.1]
 
     if next_batch and next_batch[0]["ordered"] is None:
-        print("📋 Next batch not ordered yet")
+        send_telegram("📋 Next batch not ordered yet")
+
+
+def send_telegram(message):
+    token = os.environ.get("TELEGRAM_TOKEN")
+    chat_id = os.environ.get("TELEGRAM_CHAT_ID")
+    try:
+        response = requests.get(
+            f"https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={message}"
+        )
+        if response.status_code != 200:
+            response.raise_for_status()
+    except Exception:
+        print("Unable to notify you over telegram")
 
 
 if __name__ == "__main__":
