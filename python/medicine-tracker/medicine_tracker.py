@@ -4,6 +4,9 @@ import os
 import requests
 from docx import Document
 from datetime import date, timedelta
+from googleapiclient.discovery import build
+from google.oauth2 import service_account
+import io
 
 load_dotenv()
 
@@ -102,8 +105,30 @@ def generate_foc_letter(current_entry, batch_end_date):
     )
 
 
+def load_workbook_from_drive(file_id, creds_path):
+    credentials = service_account.Credentials.from_service_account_file(
+        creds_path, scopes=["https://www.googleapis.com/auth/drive.readonly"]
+    )
+    service = build("drive", "v3", credentials=credentials)
+    return (
+        service.files()
+        .export_media(
+            fileId=file_id,
+            mimeType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+        .execute()
+    )
+
+
 if __name__ == "__main__":
-    wb = load_workbook("assets/Medicine Tracker.xlsx")
+    wb = load_workbook(
+        io.BytesIO(
+            load_workbook_from_drive(
+                os.environ.get("MEDICINE_TRACKER_DRIVE_SHEET_ID"),
+                "./assets/service_account.json",
+            )
+        )
+    )
     ws = wb["Schedule Of Medication"]
     entries = get_entries(ws)
     current = find_current_entry(entries)
