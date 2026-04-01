@@ -29,6 +29,8 @@
 | `ResponseEntity<T>` | Wraps a response with both a body and HTTP status code                |
 | `AtomicLong`        | Thread-safe counter; use for id generation                            |
 | `Optional<T>`       | Represents a value that may or may not be present; avoids null checks |
+| `RestTemplate` | Spring's synchronous HTTP client for making HTTP calls to external services |
+| `ParameterizedTypeReference<T>` | Spring workaround for Java type erasure when deserializing generic types like `List<T>` |
 
 ## Key Interfaces
 
@@ -51,3 +53,8 @@
 | `SecurityContextHolder` | Spring's holder for the current authenticated user — set this to authenticate a request |
 | `BCryptPasswordEncoder` | Standard password hashing — never store plain text passwords |
 | Spring IoC container | Manages all beans (`@Component`, `@Service`, `@Repository`, `@Bean`) — handles creation and injection |
+| Type erasure | Java removes generic type parameters at runtime — `List<String>` becomes `List` at bytecode level |
+| Bounded context | DDD concept — a service boundary drawn around a coherent business domain |
+| Multi-module Maven project | Parent pom with `<packaging>pom</packaging>` coordinating child modules, each producing independent jars |
+| Modular monolith | Single deployable unit structured with strict internal module boundaries — stepping stone before microservices |
+
