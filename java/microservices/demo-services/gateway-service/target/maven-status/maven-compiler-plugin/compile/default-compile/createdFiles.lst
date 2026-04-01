@@ -1,0 +1,4 @@
+com/prasanth/gateway_service/controller/UserController.class
+com/prasanth/gateway_service/client/UserServiceClient.class
+com/prasanth/gateway_service/GatewayServiceApplication.class
+com/prasanth/gateway_service/client/UserServiceClient$1.class
