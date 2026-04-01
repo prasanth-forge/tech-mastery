@@ -81,8 +81,9 @@ def generate_letter(template_path, output_path, replacements):
     doc = Document(template_path)
     for paragraph in doc.paragraphs:
         for run in paragraph.runs:
-            if run.text in replacements:
-                run.text = str(replacements[run.text])
+            for key in replacements:
+                if key in run.text:
+                    run.text = run.text.replace(key, str(replacements[key]))
     doc.save(output_path)
 
 
