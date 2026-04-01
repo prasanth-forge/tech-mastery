@@ -1,8 +1,9 @@
 from openpyxl import load_workbook
-from datetime import date
 from dotenv import load_dotenv
 import os
 import requests
+from docx import Document
+from datetime import date, timedelta
 
 load_dotenv()
 
@@ -13,7 +14,7 @@ def get_entries(worksheet):
         if any(cell is not None for cell in row):
             entries.append(
                 {
-                    "serial": row[1],
+                    "serial": str(row[1]),
                     "ordered": row[2],
                     "started": row[4],
                     "ended": row[5],
@@ -28,29 +29,39 @@ def find_current_entry(entries):
             return entry
 
 
-def find_batch_end(entries, current):
-    batch_number = int(current["serial"])
-    batch_entries = [e for e in entries if int(e["serial"]) == batch_number]
-    batch_end = max(batch_entries, key=lambda e: e["ended"])
-    return batch_end["ended"]
+def find_next_box_num(current):
+    (batch, box) = current["serial"].split(".")
+    match box:
+        case "1" | "5":
+            return f"{int(batch)}.{int(box) + 1}"
+        case "6":
+            return f"{int(batch) + 1}.1"
 
 
 def check_alerts(entries, current):
-    batch_end = find_batch_end(entries, current).date()
+    batch_end = current["ended"].date()
     days_remaining = (batch_end - date.today()).days
+    current_entry = current["serial"].split(".")[1]
 
-    if days_remaining == 7:
-        send_telegram("⚠️ 7 days left — time to order next batch")
-    elif days_remaining == 4:
-        send_telegram("🚨 4 days left — order urgently")
-    else:
-        send_telegram(f"✅ {days_remaining} days remaining until batch ends")
+    if current_entry not in ("1", "5", "6"):
+        return
 
-    next_batch_num = int(current["serial"]) + 1
-    next_batch = [e for e in entries if e["serial"] == next_batch_num + 0.1]
+    next_box_num = find_next_box_num(current)
+    next_box_entry = [e for e in entries if e["serial"] == next_box_num]
 
-    if next_batch and next_batch[0]["ordered"] is None:
+    if next_box_entry and next_box_entry[0]["ordered"] is None:
         send_telegram("📋 Next batch not ordered yet")
+
+        if days_remaining == 7:
+            send_telegram("⚠️ 7 days left — time to order next batch")
+            if current_entry in ("1", "5"):
+                generate_foc_letter(current_entry, batch_end)
+        elif days_remaining == 4:
+            send_telegram("🚨 4 days left — order urgently")
+            if current_entry in ("1", "5"):
+                generate_foc_letter(current_entry, batch_end)
+        else:
+            send_telegram(f"✅ {days_remaining} days remaining until batch ends")
 
 
 def send_telegram(message):
@@ -64,6 +75,30 @@ def send_telegram(message):
             response.raise_for_status()
     except Exception:
         print("Unable to notify you over telegram")
+
+
+def generate_letter(template_path, output_path, replacements):
+    doc = Document(template_path)
+    for paragraph in doc.paragraphs:
+        for run in paragraph.runs:
+            if run.text in replacements:
+                run.text = str(replacements[run.text])
+    doc.save(output_path)
+
+
+def generate_foc_letter(current_entry, batch_end_date):
+    if current_entry not in ("1", "5"):
+        return
+
+    replacements = {
+        "{{today_date}}": date.today(),
+        "{{delivery_date}}": batch_end_date - timedelta(2),
+    }
+    generate_letter(
+        f"assets/for_{4 if current_entry == '1' else 1}_template.docx",
+        f"assets/for_{4 if current_entry == '1' else 1}_{date.today()}.docx",
+        replacements,
+    )
 
 
 if __name__ == "__main__":
