@@ -121,11 +121,13 @@ def load_workbook_from_drive(file_id, creds_path):
 
 
 if __name__ == "__main__":
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
     wb = load_workbook(
         io.BytesIO(
             load_workbook_from_drive(
                 os.environ.get("MEDICINE_TRACKER_DRIVE_SHEET_ID"),
-                "./assets/service_account.json",
+                os.path.join(BASE_DIR, "assets", "service_account.json"),
             )
         )
     )
