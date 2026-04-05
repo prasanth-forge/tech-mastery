@@ -42,6 +42,7 @@
 | `MockMvc` | Simulates HTTP requests against your controller without a running server |
 | `ObjectMapper` | Jackson class for serialising Java objects to JSON and back |
 | `BadCredentialsException` | Spring Security exception thrown when authentication fails due to wrong credentials |
+| `HikariCP` | Default Spring Boot connection pool — manages a pool of reusable database connections|
 
 ## Key Interfaces
 
@@ -91,3 +92,6 @@
 | `@WebMvcTest` security gap | `@WebMvcTest` does not load your `SecurityConfig` by default — use `@Import(SecurityConfig.class)` to apply your actual security rules |
 | `content().string()` | MockMvc matcher for asserting a plain string response body — use when the response is not JSON |
 | AssertJ | Fluent assertion library included in `spring-boot-starter-test`. `assertThat(x).isEqualTo(y)`, `isPresent()`, `isNotPresent()` |
+| JDBC URL | Connection string format for Java database connections: `jdbc:<driver>://<host>:<port>/<database>` |
+| `ddl-auto: update` | Hibernate setting — creates or alters tables to match entities on startup without dropping existing data |
+| `ddl-auto: create` | Hibernate setting — drops and recreates all tables on every startup. Data is wiped on every restart |
