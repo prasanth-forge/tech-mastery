@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -70,5 +71,20 @@ public class AuthControllerTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().string("mocked-jwt-token"));
+    }
+
+    @Test
+    void login_returns401OnBadCredentials() throws Exception {
+        when(authenticationManager.authenticate(any())).thenThrow(new BadCredentialsException("Invalid username/password"));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        AuthRequest authRequest = new AuthRequest();
+        authRequest.setEmail("alice@prasant-forge.com");
+        authRequest.setPassword("password123");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authRequest)))
+                .andExpect(status().isUnauthorized());
     }
 }
