@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prasanth.hello_spring.model.User;
 import com.prasanth.hello_spring.repository.UserRepository;
 import com.prasanth.hello_spring.security.JwtUtil;
-import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

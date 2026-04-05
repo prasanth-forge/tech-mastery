@@ -23,6 +23,12 @@
 | `@Component` | Class | Marks class as a Spring-managed bean, available for injection |
 | `@EnableEurekaServer` | Main class | Turns the application into a Eureka service registry |
 | `@EnableConfigServer` | Main class | Turns the application into a Spring Cloud Config Server |
+| `@Test` | Method | Marks a method as a JUnit 5 test case |
+| `@BeforeEach` | Method | Runs before every test method in the class |
+| `@WebMvcTest(Controller.class)` | Class | Loads only the web/controller slice — no full Spring context |
+| `@DataJpaTest` | Class | Loads only the JPA slice — real repository against embedded H2 |
+| `@WithMockUser` | Method/Class | Injects a fake authenticated principal into the security context for a test |
+| `@Import(Config.class)` | Class | Explicitly imports a configuration class into the test slice |
 
 ## Key Classes
 
@@ -33,6 +39,9 @@
 | `Optional<T>`       | Represents a value that may or may not be present; avoids null checks |
 | `RestTemplate` | Spring's synchronous HTTP client for making HTTP calls to external services |
 | `ParameterizedTypeReference<T>` | Spring workaround for Java type erasure when deserializing generic types like `List<T>` |
+| `MockMvc` | Simulates HTTP requests against your controller without a running server |
+| `ObjectMapper` | Jackson class for serialising Java objects to JSON and back |
+| `BadCredentialsException` | Spring Security exception thrown when authentication fails due to wrong credentials |
 
 ## Key Interfaces
 
@@ -71,3 +80,14 @@
 | `fetch-registry: false` | Prevents a service pulling the registry from Eureka. Also set on Eureka Server for the same reason |
 | Spring Cloud BOM | Manages version alignment across all Spring Cloud dependencies. Declared once in parent pom, inherited by all modules |
 | `optional:configserver:` | Config import prefix — allows fallback to local config if Config Server is unreachable instead of failing on startup |
+| `@Mock` vs `@MockitoBean` | `@Mock` is pure Mockito — no Spring context. `@MockitoBean` registers the mock as a Spring bean, replacing the real one in the context. Use `@MockitoBean` with `@WebMvcTest` |
+| `@MockBean` deprecation | Deprecated in Spring Boot 3.4+. Replaced by `@MockitoBean` from `org.springframework.test.context.bean.override.mockito` |
+| `when().thenReturn()` | Mockito stub — defines what a mock returns when a method is called |
+| `when().thenThrow()` | Mockito stub — makes a mock throw an exception when a method is called |
+| `any(Type.class)` | Mockito argument matcher — matches any argument of that type |
+| Unstubbed mock behaviour | Mockito returns `null` for objects, `0` for numbers, `false` for booleans on unstubbed calls — can mask bugs |
+| `jsonPath` | JSONPath expression for asserting response body fields. `$` = root, `$.name` = name field |
+| `csrf()` | Test-side post processor that adds a CSRF token to requests. Required for POST in tests using Spring's default security. Not needed when `SecurityConfig` with CSRF disabled is imported |
+| `@WebMvcTest` security gap | `@WebMvcTest` does not load your `SecurityConfig` by default — use `@Import(SecurityConfig.class)` to apply your actual security rules |
+| `content().string()` | MockMvc matcher for asserting a plain string response body — use when the response is not JSON |
+| AssertJ | Fluent assertion library included in `spring-boot-starter-test`. `assertThat(x).isEqualTo(y)`, `isPresent()`, `isNotPresent()` |
