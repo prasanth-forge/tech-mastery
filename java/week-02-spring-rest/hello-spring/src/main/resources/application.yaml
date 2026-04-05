@@ -1,3 +1,10 @@
 spring:
   application:
     name: hello-spring
+  datasource:
+    url: jdbc:postgresql://localhost:5432/hello_spring
+    username: prash
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update

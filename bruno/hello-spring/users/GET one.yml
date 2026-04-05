@@ -8,7 +8,7 @@ http:
   url: http://localhost:8080/users/1
   headers:
     - name: Authorization
-      value: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcmFzYW50aEBwcmFzYW50aC1mb3JnZS5jb20iLCJpYXQiOjE3NzQ4MDMzNDUsImV4cCI6MTc3NDgxMjk0NX0.W3biMqYoU-hmxxnxllGZnI-X5H960xbQxDcxpSZdczA
+      value: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcmFzYW50aEBwcmFzYW50aC1mb3JnZS5jb20iLCJpYXQiOjE3NzUzNzQ4MDYsImV4cCI6MTc3NTM4NDQwNn0.xiU6Ib21JRIeN7xpi4TTgLnOYq_yDclLRxsebkrh2OI
   auth: inherit
 
 settings:
